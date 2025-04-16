@@ -1,0 +1,22 @@
+{
+  "name": "Alert: High Error Logs",
+  "type": "log alert",
+  "query": "logs(\"@status:error @service:recommendations-service\").index(\"*\").rollup(\"count\").last(\"5m\") > 100",
+  "message": "Alert: The number of error logs has exceeded the threshold. Please investigate immediately.",
+  "tags": [
+  ],
+  "options": {
+    "thresholds": {
+      "critical": 100,
+      "warning": 50
+    },
+    "enable_logs_sample": false,
+    "notify_audit": false,
+    "on_missing_data": "resolve",
+    "renotify_interval": 3600,
+    "escalation_message": "There has been a significant increase in error logs over the past hour. Please check the application logs.",
+    "include_tags": true,
+    "evaluation_delay": 60
+  },
+  "priority": 1
+}

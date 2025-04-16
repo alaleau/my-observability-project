@@ -1,0 +1,5 @@
+# curl -X GET http://localhost:3000/error-simulation/error-500
+GET http://localhost:3000/simulate/error-500
+
+###
+

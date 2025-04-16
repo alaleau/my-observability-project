@@ -1,0 +1,19 @@
+{
+    "name": "Alert: High Response Time",
+    "type": "query alert",
+    "query": "max(last_5m):max:trace.opentelemetry_instrumentation_http.server.duration{*} by {service} > 0.5",
+    "message": "Alert: The response time for the API is too high. The response time has exceeded 500ms for the last 5 minutes.",
+    "tags": [],
+    "options": {
+        "thresholds": {
+            "critical": 0.5,
+            "warning": 0.3
+        },
+        "notify_audit": false,
+        "threshold_windows": null,
+        "on_missing_data": "default",
+        "include_tags": true,
+        "new_group_delay": 60
+    },
+    "priority": 1
+}

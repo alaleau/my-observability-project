@@ -1,0 +1,6 @@
+### GENERATE ERROR PRODUCT
+GET http://localhost:3000/api/products/20
+
+###
+http://localhost:3001/api/stocks/20
+cache-control: no-cache

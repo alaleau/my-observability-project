@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  product-service:
+    build:
+      context: .
+      dockerfile: apps/products/Dockerfile
+    ports:
+      - "3000:3000"
+    network_mode: "host"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - DD_TRACE_ENABLED=true
+      - DD_SERVICE=products-service
+      - DD_ENV=production
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_LOGS_INJECTION=true
+      - OTEL_EXPORTER=otlp
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_URL=http://localhost:4318/v1/traces
+      - DD_API_KEY=${DD_API_KEY}
+
+  stock-service:
+    build:
+      context: .
+      dockerfile: apps/stocks/Dockerfile
+    ports:
+      - "3001:3001"
+    network_mode: "host"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - DD_TRACE_ENABLED=true
+      - DD_SERVICE=stocks-service
+      - DD_ENV=production
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_LOGS_INJECTION=true
+      - OTEL_EXPORTER=otlp
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_URL=http://localhost:4318/v1/traces
+      - DD_API_KEY=${DD_API_KEY}
+
+  recommendations-service:
+    build:
+      context: .
+      dockerfile: apps/recommendations/Dockerfile
+    environment:
+      - DD_SERVICE=recommendations-service
+    ports:
+      - "3002:3002"
+    network_mode: "host"
+    volumes:
+      - ./logs:/app/logs
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.119.0
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "55679:55679"
+    volumes:
+      - ./otel-config.yaml:/etc/otel/config.yaml
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./logs:/app/logs
+    command: ["--config", "/etc/otel/config.yaml"]
+    restart: always
+    network_mode: "host"
